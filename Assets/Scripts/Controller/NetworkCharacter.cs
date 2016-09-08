@@ -23,13 +23,16 @@ namespace PWS.Entities
         public string PlayerName;
 
         [SyncVar]
+        public float turn;
+        [SyncVar]
+        public float walk;
+
+        [SyncVar]
         public CharacterType CharacterType;
 
         public Animator Anim { get; set; }
 
         public CharacterController CharController { get; set; }
-
-        public InputController InputController { get; set; }
 
         public override void OnStartClient()
         {
@@ -41,13 +44,6 @@ namespace PWS.Entities
             }           
         }
 
-        public override void OnStartLocalPlayer()
-        {
-            base.OnStartLocalPlayer();
-            InputController = GameManager.Instance.InputController;
-            GameManager.Instance.CameraManager.Camera.Target = transform;
-        }
-
         private void Awake()
         {
             Anim = GetComponent<Animator>();
@@ -57,6 +53,15 @@ namespace PWS.Entities
         public void Initialize(LobbyPlayer player)
         {
             PlayerName = player.PlayerName;
+        }
+
+        public void Setup()
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+            CameraManager.Instance.Camera.Target = transform;
         }
 
         public void Reset()
@@ -71,16 +76,32 @@ namespace PWS.Entities
 
         public void UpdateInput()
         {
-            if (!isLocalPlayer || InputController == null)
+            if (!isLocalPlayer)
+            {
+                Move(turn, walk);
+                return;
+            }
+
+            if (InputController.Instance == null)
             {
                 return;
             }
             
-            var speed = InputController.IsRunning ? 1f : 0.5f;
-            var turn = InputController.Horizontal;
-            turn = Mathf.Clamp(Mathf.Clamp(InputController.MouseMovement.x, -0.5f, 0.5f) + turn * speed, -1f, 1f);
-            var walk = InputController.Vertical * speed;
+            var speed = InputController.Instance.IsRunning ? 1f : 0.5f;
+            turn = InputController.Instance.Horizontal;
+            turn = Mathf.Clamp(Mathf.Clamp(InputController.Instance.MouseMovement.x, -0.5f, 0.5f) + turn * speed, -1f, 1f);
+            walk = InputController.Instance.Vertical * speed; //Remove old shit egor pls
+
+            if (CameraManager.Instance != null)
+            {
+                transform.eulerAngles = new Vector3(0, CameraManager.Instance.Camera.transform.eulerAngles.y, 0);
+            }
+           
+            Vector3 moveDirection = moveDirection = new Vector3(turn, 0, walk);
+            moveDirection = transform.TransformDirection(moveDirection);
+            CharController.SimpleMove(moveDirection * 40f);
             Move(turn, walk);
+
         }
 
         public void Move(float turn, float walk)

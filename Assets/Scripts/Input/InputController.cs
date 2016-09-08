@@ -4,6 +4,8 @@ namespace PWS.Input
 {
     public class InputController : MonoBehaviour
     {
+        public static InputController Instance { get; private set; }
+
         public Vector2 MouseMovement { get; set; }
 
         public InputController()
@@ -27,6 +29,11 @@ namespace PWS.Input
         public bool Attack { get; protected set; }
 
         public bool Block { get; protected set; }
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         protected virtual void Start()
         {

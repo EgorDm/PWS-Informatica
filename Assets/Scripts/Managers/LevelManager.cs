@@ -10,5 +10,13 @@ namespace PWS.Managers
     {
         private Transform[] _spawnPoints;
 
+        private void Start()
+        {
+            foreach (var networkCharacter in GameManager.Players)
+            {
+                networkCharacter.Setup();
+            }
+        }
+
     }
 }

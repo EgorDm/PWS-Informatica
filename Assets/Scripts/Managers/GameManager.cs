@@ -26,23 +26,17 @@ namespace PWS.Managers
     {
         public static GameManager Instance { get; private set; }
 
-        private static List<NetworkCharacter> _players = new List<NetworkCharacter>();
+        public static List<NetworkCharacter> Players = new List<NetworkCharacter>();
             //TODO: Change to correct player type
-
-        public CameraManager CameraManager { get; private set; }
+            
         //TODO: A level manager which creates, deletes characters and assigns spawnpoints.
         //TODO: A GUI manager which handles GUI, thus all the messages
 
         [HideInInspector] [SyncVar] public GameState GameState = GameState.WaitingForPlayers;
 
-        public InputController InputController { get; private set; }
-
         private void Awake()
         {
             Instance = this;
-            InputController = GetComponent<InputController>();
-            CameraManager = GetComponent<CameraManager>();
-            CameraManager.Camera.Controller = InputController;
         }
 
         [ServerCallback]
@@ -53,7 +47,7 @@ namespace PWS.Managers
 
         private IEnumerator GameLoop()
         {
-            if (_players.Count < 2)
+            if (Players.Count < 2)
             {
                 //TODO: Stop the game?
             }
@@ -111,14 +105,9 @@ namespace PWS.Managers
 
         private void ResetAllPlayers()
         {
-            foreach (var player in _players)
+            foreach (var player in Players)
             {
                 player.Reset();
-                if (player.isLocalPlayer)
-                {
-                    player.InputController = InputController;
-                    CameraManager.Camera.Target = player.transform;
-                }
             }
         }
 
@@ -126,15 +115,20 @@ namespace PWS.Managers
         {
             var netChar = character.GetComponent<NetworkCharacter>();
             netChar.PlayerName = playerName;
-            _players.Add(netChar);
+            Players.Add(netChar);
         }
 
         public static void RemovePlayer(NetworkCharacter character)
         {
-            if (_players.Contains(character))
+            if (Players.Contains(character))
             {
-                _players.Remove(character);
+                Players.Remove(character);
             }
+        }
+
+        void OnDestroy()
+        {
+           Players.Clear();
         }
     }
 }

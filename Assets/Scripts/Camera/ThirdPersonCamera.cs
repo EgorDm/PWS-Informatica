@@ -6,7 +6,6 @@ namespace PWS
 {
     public class ThirdPersonCamera : MonoBehaviour
     {
-        public InputController Controller { get; set; }
         public Camera MyCamera { get; set; }
         public Transform Target;
         public Vector3 TargetOffset = Vector3.zero;
@@ -45,8 +44,8 @@ namespace PWS
         private void LateUpdate()
         {
             if (!Target) return;
-            _x += Controller.MouseMovement.x* XSpeed*0.02f;
-            _y -= Controller.MouseMovement.y* YSpeed*0.02f;
+            _x += InputController.Instance.MouseMovement.x* XSpeed*0.02f;
+            _y -= InputController.Instance.MouseMovement.y* YSpeed*0.02f;
 
             _y = ClampAngle(_y, YMinLimit, YMaxLimit);
 
