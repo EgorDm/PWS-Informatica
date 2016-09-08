@@ -4,7 +4,7 @@ namespace PWS.Input
 {
     public class InputController : MonoBehaviour
     {
-        public Transform Target;
+        public Vector2 MouseMovement { get; set; }
 
         public InputController()
         {
@@ -39,14 +39,21 @@ namespace PWS.Input
 
         protected virtual void UpdateInput()
         {
+            Horizontal = UnityEngine.Input.GetAxis("Horizontal");
+            Vertical = UnityEngine.Input.GetAxis("Vertical");
+            Jump = UnityEngine.Input.GetButton("Jump");
+            Attack = UnityEngine.Input.GetButtonDown("Attack");
+            Block = UnityEngine.Input.GetButton("Block");
+            IsRunning = UnityEngine.Input.GetButton("Run");
+            MouseMovement = new Vector2(UnityEngine.Input.GetAxis("Mouse X"), UnityEngine.Input.GetAxis("Mouse Y"));
         }
 
         public override string ToString()
         {
             return
                 string.Format(
-                    "{0}, Target(x,y,z): ({1}, {2}, {3}), IsRunning: {4}, Jump: {5}, Horizontal: {6}, Vertical: {7}, Attack: {8}, Block: {9}",
-                    base.ToString(), Target.position.x, Target.position.y, Target.position.z, IsRunning, Jump, Horizontal,
+                    "{0}, IsRunning: {4}, Jump: {5}, Horizontal: {6}, Vertical: {7}, Attack: {8}, Block: {9}",
+                    base.ToString(), IsRunning, Jump, Horizontal,
                     Vertical, Attack, Block);
         }
     }

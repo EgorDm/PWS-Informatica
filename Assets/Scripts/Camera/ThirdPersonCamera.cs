@@ -6,7 +6,7 @@ namespace PWS
 {
     public class ThirdPersonCamera : MonoBehaviour
     {
-        public PlayerInputController Controller { get; set; }
+        public InputController Controller { get; set; }
         public Camera MyCamera { get; set; }
         public Transform Target;
         public Vector3 TargetOffset = Vector3.zero;
@@ -38,7 +38,7 @@ namespace PWS
             if (GetComponent<Rigidbody>())
                 GetComponent<Rigidbody>().freezeRotation = true;
 
-            Controller = GetComponent<PlayerInputController>();
+            //Controller = GetComponent<PlayerInputController>();
             MyCamera = GetComponent<Camera>();
         }
 

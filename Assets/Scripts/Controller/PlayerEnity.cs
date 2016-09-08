@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 namespace PWS.Entities
 {
-    public class PlayerEnity : CharacterEnity<PlayerInputController>
+    public class PlayerEnity
     {
         private const float DampTime = 5f;
         private const float DampDeltaTime = 0.5f;
@@ -14,7 +14,7 @@ namespace PWS.Entities
         private bool _attackStarted = false;
         private float _attackTimePassed= 0f;
 
-        protected override void UpdateMovement()
+       /* protected override void UpdateMovement()
         {
             base.UpdateMovement();
             transform.eulerAngles = new Vector3(0, Controller.CameraController.MyCamera.transform.eulerAngles.y, 0);
@@ -51,7 +51,7 @@ namespace PWS.Entities
                 }
             }
             
-        }
+        }*/
 
         private static float VectorAngle(Vector2 vector)
         {
