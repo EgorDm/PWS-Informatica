@@ -25,15 +25,15 @@ namespace PWS.Managers
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            StartCoroutine(ConnectDefault());
+            //StartCoroutine(ConnectDefault());
         }
 
         //TODO: For testing purposes. Tries to connect to localhost. If error then create a new match.
         private IEnumerator ConnectDefault()
         {
-            networkAddress = LocalHost;
+            //networkAddress = LocalHost;
             //var myClient = StartClient();
-            //yield return new WaitForSeconds(3.0f);
+            //yield return new WaitForSeconds(5.0f);
             var myClient = StartHost();
             yield return null;
             if (!myClient.isConnected)
@@ -81,16 +81,6 @@ namespace PWS.Managers
             return obj;
         }
 
-        public override void OnLobbyServerPlayerRemoved(NetworkConnection conn, short playerControllerId)
-        {
-            base.OnLobbyServerPlayerRemoved(conn, playerControllerId);
-        }
-
-        public override void OnLobbyServerDisconnect(NetworkConnection conn)
-        {
-            base.OnLobbyServerDisconnect(conn);
-        }
-
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
             if (lobbyPlayer == null)
@@ -104,6 +94,14 @@ namespace PWS.Managers
             return true;
         }
 
+
+
+        public override void OnLobbyClientAddPlayerFailed()
+        {
+            base.OnLobbyClientAddPlayerFailed();
+            Debug.Log("What?");
+        }
+
         public override void OnClientConnect(NetworkConnection conn)
         {
             base.OnClientConnect(conn);
@@ -113,6 +111,7 @@ namespace PWS.Managers
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
+            Debug.Log("Disconnected from " + networkAddress);
         }
 
         public override void OnClientError(NetworkConnection conn, int errorCode)

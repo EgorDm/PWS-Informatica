@@ -19,7 +19,6 @@ namespace PWS.Managers
         public override void OnClientEnterLobby()
         {
             base.OnClientEnterLobby();
-            SendReadyToBeginMessage();
         }
     }
 }

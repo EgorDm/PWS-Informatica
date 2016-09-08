@@ -38,7 +38,14 @@ namespace PWS.Entities
             if (!isServer)
             {
                 GameManager.AddPlayer(gameObject, PlayerName);
-            }
+            }           
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            InputController = GameManager.Instance.InputController;
+            GameManager.Instance.CameraManager.Camera.Target = transform;
         }
 
         private void Awake()
