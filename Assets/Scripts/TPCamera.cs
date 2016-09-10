@@ -1,13 +1,12 @@
-﻿using System;
-using PWS.Input;
+﻿using PWS.Input;
 using UnityEngine;
 
 namespace PWS
 {
-    public class ThirdPersonCamera : MonoBehaviour
-    {
+    public class TPCamera : MonoBehaviour {
+
         public Camera MyCamera { get; set; }
-        public Transform Target;
+        public NetPlayer Target;
         public Vector3 TargetOffset = Vector3.zero;
         public float Distance = 4.0f;
 
@@ -43,22 +42,22 @@ namespace PWS
 
         private void LateUpdate()
         {
-            if (!Target) return;
-            _x += InputController.Instance.MouseMovement.x* XSpeed*0.02f;
-            _y -= InputController.Instance.MouseMovement.y* YSpeed*0.02f;
+            if (!Target || Target.PlayerMovement.InputController == null) return;
+            _x += Target.PlayerMovement.InputController.MouseMovement.x * XSpeed * 0.02f;
+            _y -= Target.PlayerMovement.InputController.MouseMovement.y * YSpeed * 0.02f;
 
             _y = ClampAngle(_y, YMinLimit, YMaxLimit);
 
             var rotation = Quaternion.Euler(_y, _x, 0);
-            var targetPos = Target.position + TargetOffset;
-            var direction = rotation*-Vector3.forward;
+            var targetPos = Target.transform.position + TargetOffset;
+            var direction = rotation * -Vector3.forward;
 
             var targetDistance = AdjustLineOfSight(targetPos, direction);
             _currentDistance = Mathf.SmoothDamp(_currentDistance, targetDistance, ref _distanceVelocity,
-                CloserSnapLag*.3f);
+                CloserSnapLag * .3f);
 
             transform.rotation = rotation;
-            transform.position = targetPos + direction*_currentDistance;
+            transform.position = targetPos + direction * _currentDistance;
         }
 
         private float AdjustLineOfSight(Vector3 target, Vector3 direction)

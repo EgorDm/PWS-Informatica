@@ -2,10 +2,8 @@
 
 namespace PWS.Input
 {
-    public class InputController : MonoBehaviour
+    public class InputController
     {
-        public static InputController Instance { get; private set; }
-
         public Vector2 MouseMovement { get; set; }
 
         public InputController()
@@ -16,7 +14,10 @@ namespace PWS.Input
             IsRunning = false;
             Attack = false;
             Block = false;
+            Enabled = true;
         }
+
+        public bool Enabled { get; set; }
 
         public bool IsRunning { get; protected set; }
 
@@ -30,22 +31,13 @@ namespace PWS.Input
 
         public bool Block { get; protected set; }
 
-        private void Awake()
+        public virtual void UpdateInput()
         {
-            Instance = this;
-        }
+            if (!Enabled)
+            {
+                return;
+            }
 
-        protected virtual void Start()
-        {
-        }
-
-        private void Update()
-        {
-            UpdateInput();
-        }
-
-        protected virtual void UpdateInput()
-        {
             Horizontal = UnityEngine.Input.GetAxis("Horizontal");
             Vertical = UnityEngine.Input.GetAxis("Vertical");
             Jump = UnityEngine.Input.GetButton("Jump");
