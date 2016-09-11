@@ -27,6 +27,7 @@ namespace PWS
 
             var levelManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<LevelManager>();
             levelManager.Camera.Target = this;
+            PlayerMovement.Camera = levelManager.Camera;
         }
 
         // Update is called once per frame
