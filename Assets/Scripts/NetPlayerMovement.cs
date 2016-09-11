@@ -19,17 +19,14 @@ namespace PWS
         [SyncVar] public float Walk = 0.0f;
         [SyncVar] public float Turn = 0.0f;
 
-        public float JumpVel = 4500f;
-        public float JumpDirectionalMultip = 0.5f;
+        public float WalkSpeed = 80f;
+
+        public float JumpVel = 500f;
         public float GroundMargin = 1f;
         public float GroundCheckMargin = 1f;
 
-        private Vector3 _startJumpVel = Vector3.zero;
-        private float _rotationTime = 0f;
-
         public bool Grounded { get; protected set; }
-
-        public Vector3 velocityLog;
+       
 
         private void Start()
         {
@@ -54,7 +51,6 @@ namespace PWS
 
         private void Update()
         {
-           Debug.Log(Body.velocity);
             UpdateGrounded();
             if (isLocalPlayer)
             {
@@ -64,11 +60,8 @@ namespace PWS
                 }
 
                 InputController.UpdateInput();
+                Move();
 
-                var speed = InputController.IsRunning ? 1f : 0.5f;
-                Turn = InputController.Horizontal;
-                Turn = Mathf.Clamp(Mathf.Clamp(InputController.MouseMovement.x, -0.5f, 0.5f) + Turn * speed, -1f, 1f);
-                Walk = InputController.Vertical * speed;
                 CmdSyncMove(Turn, Walk);
                 if (Grounded)
                 {
@@ -79,27 +72,28 @@ namespace PWS
                         transform.eulerAngles = newRot;
 
                     }
-
-                    Anim.applyRootMotion = true;
-                    if (InputController.Jump)
-                    {
-                        if (!Anim.GetBool("jump"))
-                        {
-                            _startJumpVel = Body.velocity;
-                        }
-                    }
                     Anim.SetBool("jump", InputController.Jump);
                 }
             }
-            UpdateMove();
+            UpdateMoveAnim();
         }
 
-        public void UpdateMove()
+        public void UpdateMoveAnim()
         {
             Anim.SetFloat("turn", Turn, DampTime, DampDeltaTime);
             Anim.SetFloat("walk", Walk, DampTime, DampDeltaTime);
-           /* AnimatorStateInfo currentState = Anim.GetCurrentAnimatorStateInfo(0);
-            float playbackTime = currentState.normalizedTime%1;*/
+        }
+
+        public void Move()
+        {
+            if (!Grounded)
+                return;
+
+            var speed = InputController.IsRunning ? 1f : 0.5f;
+            Walk = InputController.Vertical*speed;
+            Turn = InputController.Horizontal*speed;
+           
+            Body.velocity = transform.TransformDirection(new Vector3(Turn * WalkSpeed, 0,  Walk * WalkSpeed));
         }
 
         [Command]
@@ -111,12 +105,7 @@ namespace PWS
 
         public void ApplyJump()
         {
-            Anim.applyRootMotion = false;
-            var newVel = Vector3.zero * JumpDirectionalMultip;
-            newVel.y = JumpVel;
-            Body.velocity *= 1.5f;
-            Body.velocity += newVel;
-            Debug.Log(Body.velocity);
+            Body.AddForce(new Vector3(0, JumpVel, 0), ForceMode.Impulse);
         }
 
         public void UpdateGrounded()
