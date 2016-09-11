@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using PWS.Input;
+using UnityEditor.AnimatedValues;
 using UnityEngine.Networking;
 
 namespace PWS
@@ -28,6 +29,8 @@ namespace PWS
 
         public bool Grounded { get; protected set; }
 
+        public Vector3 velocityLog;
+
         private void Start()
         {
             Anim = GetComponent<Animator>();
@@ -51,6 +54,7 @@ namespace PWS
 
         private void Update()
         {
+           Debug.Log(Body.velocity);
             UpdateGrounded();
             if (isLocalPlayer)
             {
@@ -108,8 +112,9 @@ namespace PWS
         public void ApplyJump()
         {
             Anim.applyRootMotion = false;
-            var newVel = _startJumpVel * JumpDirectionalMultip;
+            var newVel = Vector3.zero * JumpDirectionalMultip;
             newVel.y = JumpVel;
+            Body.velocity *= 1.5f;
             Body.velocity += newVel;
             Debug.Log(Body.velocity);
         }
